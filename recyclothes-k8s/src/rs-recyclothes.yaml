@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: recyclothes-rs
+  labels:
+    app: recyclothes
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: recyclothes
+  template:
+    metadata:
+      labels:
+        app: recyclothes
+    spec:
+      containers:
+        - name: frontend
+          image: nginx:alpine
+          env:
+            - name: DIR_CLOTHES_PENDIENTE
+              valueFrom:
+                configMapKeyRef:
+                  name: recyclothes-cm
+                  key: directorioPendiente
+            - name: DIR_CLOTHES_ONLINE
+              valueFrom:
+                configMapKeyRef:
+                  name: recyclothes-cm
+                  key: directorioOnline
+          volumeMounts:
+            - mountPath: "/var/share/nginx/html"
+              name: recyclothes-volume
+      volumes:
+        - name: recyclothes-volume
+          persistentVolumeClaim:
+            claimName: recyclothes-pvc

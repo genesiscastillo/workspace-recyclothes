@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recyclothes-deployment
+  labels:
+    app: recyclothes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: recyclothes
+  template:
+    metadata:
+      labels:
+        app: recyclothes
+    spec:
+      containers:
+        - name: container-restserver-upload
+          image: genesiscastillo/recyclothes-upload
+          volumeMounts:
+            - mountPath: "/usr/src/app/uploads"
+              name: recyclothes-volume
+      volumes:
+        - name: recyclothes-volume
+          persistentVolumeClaim:
+            claimName: recyclothes-pvc
